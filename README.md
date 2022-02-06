@@ -1,5 +1,5 @@
 # Penetration-Test
-Sızma testi hakkında bilgiler paylaştığım naçizane repo 
+Sızma testi hakkında paylaşımlar yapacağım naçizane repo 😊
 
 
 
