@@ -1,0 +1,37 @@
+show : İçerdiği modülleri göstermek için kullanılan komuttur.
+
+show options : Bu komut ise seçmiş olduğumuz Exploit’in ayarını göstermek için kullanabiliriz.
+
+show payloads : Kullanabileceğimiz payloadları gösterir
+
+help : Metasploit’te kullanabileceğimiz başlıca kodları bize gösterir.
+
+info : Örnek vermek gerekirse bir Exploit seçtik ve info yazarak o Exploit’e dair ayarları bizlere çıkarır kısacası Exploit’e dair temel bilgileri bize verir.
+
+set – setg : Değişken ve parametleri değerini gireceğimiz zaman ve payload seçtiğimizde veri atanması için kullanacağımız komuttur.
+
+Unset – unsetg : Atanan değeri kaldırır ve değişkeni kaldırır
+
+back   :  Bir önceki menüye geri dönüşü saplar
+
+jobs : İşlemleri gösterir ve düzenlemek için kullanılır
+
+load : Eklenti yüklenimi için kullanılır
+
+irb : irb scripting modunu bizlere getirir.
+
+loadpath  :   Belirtilen yoldan istenilen modülü/Exploiti yükler.
+
+route: Oturum trafiğinin yönlendirilme işlemini sağlar
+
+save :Veriyi kayıt eder,depolar.
+
+search: Modüllerde arama yapar.
+
+sessions : Aktif olan oturumları gösterir ve bilgisini verir.
+
+unload : Framework için mevcut eklentiyi kaldırır.
+
+Exploit : Hedef sisteme/makine için Exploiti başlatmak için kullanılan komuttur.
+
+show targets : Expolitin içindeyken hangi işletim sistemlerine uygulayabileceğimizi listeler
