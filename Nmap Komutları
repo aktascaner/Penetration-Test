@@ -1,0 +1,50 @@
+NMAP Ping Scan – No Port Scan 
+Belirtilen ağ aralığındaki açık olan cihazların tespiti yapılır. 
+ nmap -sn 192.168.2.10-15 
+
+NMAP Ping Scan 
+Belirtilen ağ aralığındaki açık olan cihazların tespiti yapılır.
+ nmap -sP 192.168.1.0/24 
+
+NMAP TCP ve UDP Taraması 
+-p parametresi ile belirli bir port verebiliriz.
+TCP Taraması:  nmap -sT -p 80,443 192.168.2.0/24 
+
+# UDP Taraması:
+- T parametresi paketlerin gönderme hızını belirler. T, 0-5 arası değer alabilir. Firewall atlatma tekniği olarak kullanılabilir.
+nmap -sU -T4 192.168.2.5
+
+
+# # NMAP SYN Scan / Stealth Scan  
+- Hedef portları tararken TCP SYN paketleri gönderilir fakat ACK paketi gönderilmez.
+- SYN paketine alınan cevaplara göre port açıklığı tespit edilir
+nmap -sS 192.168.2.43
+
+
+# NMAP XMAS Scan
+- Hedefe URG, PUSH veya FIN bayrakları gönderilir. 
+- Hedefin o portu kapalı ise “RST-ACK” paketi cevabı elde edilir. 
+- Herhangi bir cevap dönmüyor ise hedef port açıktır
+nmap -sX 192.168.2.43
+
+
+# NMAP Fast Scan:
+- Networkteki cihazları ve çalışan portları hızlıca tespit eder
+nmap -T4 -F 192.168.2.43
+
+
+# NMAP ile İşletim Sistemi Tespiti:
+nmap -O 192.168.2.43
+
+
+# NMAP Versiyon Bilgisi Öğrenme 
+ nmap -sV 192.168.2.13
+
+
+# NMAP’in Scriptlerini ile Tarama
+ - Nmap, kendi scriptlerini bir hedef üzerinde dener. Tüm portların içerisinde deneyerek zafiyet bulmaya çalışır.
+ nmap -sC 192.168.2.13
+ 
+
+
+
