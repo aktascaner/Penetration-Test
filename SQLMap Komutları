@@ -1,6 +1,3 @@
-Sqlmap nedir? Sqlmap, sql injection testleri için kullanılan ve bayağı da bir popüler olan bir uygulama. 
-Python ile yazılan Sqlmap'in genel kullanımı bu programı --dbs komutuyla değilde açık bir şekilde bilindiğindinde sql açıklarını çatır çutur hallediceksiniz.
-
 
 -h, --help:klasik basit kullanım özelliklerini yazdıran komuttur.
 
